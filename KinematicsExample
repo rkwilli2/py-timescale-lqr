@@ -1,0 +1,93 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jun 30 19:45:52 2022
+
+@author: davis
+"""
+
+import numpy as np
+#import timescalecalculus as tsc
+from numpy import transpose as tr
+from numpy import array as mat
+from numpy import linalg
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+import random
+
+#Problem:
+#A system obeying Newtons Laws, discretized for time increments of 1s 
+#Optimize a object moving to reach a point by time 20
+
+#Define Matrices
+T=.25
+t=8
+x0 = mat([[10],[10]])
+A = mat([[1, T],[0, 1]])
+B = mat([[(T**2)/2],[T]])
+
+Q = mat([[1, 0],[0, 1]])
+R = mat([[1]])
+#Set Trials
+n=(t/T)
+
+#Initialize and B.C.
+s = mat([[100,0],[0,100]])
+S = list([mat([[100,0],[0,100]])])
+
+K = []
+
+u = []
+us = [0]
+ 
+x = list(mat([x0]))
+ds = [x0[0,0]]
+vs = [x0[1,0]]
+
+ts = [0]
+ts2 =[0]
+i = n-1
+while i >= 0:
+    Kmidstep = ((tr(B) @ s) @ B)+R
+    k = ((linalg.inv(Kmidstep) @ tr(B)) @ s) @ A
+    K.insert(0,k)
+    Smidstep1 = ((tr(B) @ s) @ B)+R
+    Smidstep2 = s - ((((s @ B)).dot(linalg.inv(Smidstep1)).dot(tr(B))).dot(s))
+    s = (tr(A).dot(Smidstep2)).dot(A)+Q
+    S.insert(0,s)
+    print(s)
+    i = i-1
+    
+for i in range (0,n):
+    unew = -K[i].dot(x[i])
+    u.append(unew)
+    us.append(int(unew))
+    xnew = A.dot(x[i]) + B.dot(u[i])
+    x.append(xnew)
+    ds.append(xnew[0,0])
+    vs.append(xnew[1,0])
+    ts.append((i+1)*T)
+    ts2.append((i+1)*T)
+    print(i)
+
+#Plotting
+plt.figure(1)
+plt.plot(ts,ds,'b-^',label='Position')
+plt.plot(ts,vs,'r-^',label='velocity')
+#Blue is Estimation, Red is Sim
+plt.xlabel('Time (s)')
+plt.ylabel('Values')
+plt.title('Optimal Position and Velocity')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+plt.figure(2)
+plt.plot(ts2,us,'y-^',label='Acceleration')
+#plt.plot(tslist,zt,'go',label='Measured')
+#Blue is Estimation, Red is Sim
+plt.xlabel('Time (s)')
+plt.ylabel('Control (Acceleration)')
+plt.title('Control over Time')
+plt.grid(True)
+plt.legend()
+plt.show()
