@@ -41,14 +41,14 @@ while i >= 0:
     Kmidstep = ((tr(B).dot(s)).dot(B))+R
     K.insert(0,((linalg.inv(Kmidstep).dot(tr(B))).dot(s).dot(A)))
     Smidstep1 = ((tr(B).dot(s)).dot(B))+R
-    Smidstep2 = s - (((s.dot(B)).dot(Smidstep1)).dot(tr(B))).dot(s)
+    Smidstep2 = s - (((s.dot(B)).dot(linalg.inv(Smidstep1))).dot(tr(B))).dot(s)
     s = (tr(A).dot(Smidstep2)).dot(A)+Q
     S.insert(0,s)
     print(s)
-    print(i)
     i = i-1
     
 for i in range (0,30):
     u.append(-K[i].dot(x[i]))
     x.append(A.dot(x[i]) + B.dot(u[i])) 
     print(i)
+
