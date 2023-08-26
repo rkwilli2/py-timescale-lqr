@@ -1,5 +1,5 @@
 # py-timescale-lqr
-A Python implemenation of the LPEG on time scales. 
+A Python implemenation of the LQPEG on time scales. 
 
 `DiscreteLQR.py` is an implementation of a discrete LQR. No time scales involved! This was a preliminary attempt to creating the full LQPEG on any arbitrary time scale.
 
